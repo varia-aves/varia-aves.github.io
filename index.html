@@ -132,19 +132,15 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   .card{min-height:360px}
 }
 /* releases */
-.releases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-.rel{display:flex;flex-direction:column;gap:14px;padding:24px;border:1px solid var(--line);border-radius:6px;background:var(--ground-2)}
-.rel .meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.rel h3{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,38px);line-height:1.05;margin:0}
-.rel p{margin:0;color:var(--muted);font-size:15px}
-.rel .tracks{list-style:none;margin:0;padding:0;font-size:15px}
-.rel .tracks li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
-.rel .tracks span:last-child{font-family:var(--mono);font-size:13px;color:var(--muted)}
-.rel .buy{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:6px}
-.rel .buy a{font-size:14px;font-weight:600;text-decoration:none;padding:9px 16px;border-radius:999px;border:1.5px solid var(--pink)}
-.rel .buy a.main{background:var(--pink);color:var(--ground)}
-.rel .buy a:hover{background:var(--ink);border-color:var(--ink);color:var(--ground)}
-@media (max-width:860px){.releases{grid-template-columns:1fr}}
+.releases{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 28px}
+.rel{display:grid;grid-template-columns:84px minmax(0,1fr);gap:16px;align-items:center}
+.rel img{width:84px;height:84px;object-fit:cover;border-radius:4px;display:block}
+.rel h3{font-family:var(--display);font-weight:700;font-size:20px;line-height:1.15;margin:2px 0 4px}
+.rel .label{font-size:11px}
+.rel .rlinks{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;font-weight:600}
+.rel .rlinks a{text-decoration:none;color:var(--pink)}
+.rel .rlinks a:hover{color:var(--ink)}
+@media (max-width:960px){.releases{grid-template-columns:1fr;gap:0}.rel{padding:14px 0;border-top:1px solid var(--line)}.rel:first-child{border-top:0;padding-top:0}}
 
 /* burger + drawer */
 .burger{display:inline-flex;flex-direction:column;justify-content:center;gap:6px;width:46px;height:46px;padding:0 11px;border:1px solid var(--line);border-radius:999px;background:rgba(22,11,23,.55);backdrop-filter:blur(6px);cursor:pointer}
@@ -271,37 +267,32 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <section id="releases">
     <div class="wrap">
       <div class="head"><h2>Releases</h2><span class="label">Out now</span></div>
-      <div class="releases">
-        <article class="rel">
-          <div class="meta"><span class="label">Single · Sisma Records</span><span class="label">Aug 2026</span></div>
-          <h3>Larp</h3>
-          <ul class="tracks">
-            <li><span>Larp (Original Mix)</span><span>5:33</span></li>
-            <li><span>Larp (Digital Sound System Remix)</span><span>5:30</span></li>
-          </ul>
-          <div class="buy">
-            <a class="main" href="https://www.beatport.com/release/larp/7181806" target="_blank" rel="noopener">Beatport</a>
-            <a href="https://open.spotify.com/album/7ov12JEEhIcjnN4A7uAnRs" target="_blank" rel="noopener">Spotify</a>
+      <ul class="releases">
+        <li class="rel">
+          <img src="media/cover-larp.jpg" alt="Cover of Larp by Varia Aves on Sisma Records" loading="lazy">
+          <div>
+            <span class="label">Sisma Records · 2026</span>
+            <h3>Larp</h3>
+            <div class="rlinks"><a href="https://www.beatport.com/release/larp/7181806" target="_blank" rel="noopener">Beatport ↗</a><a href="https://open.spotify.com/album/7ov12JEEhIcjnN4A7uAnRs" target="_blank" rel="noopener">Spotify ↗</a></div>
           </div>
-        </article>
-        <article class="rel">
-          <div class="meta"><span class="label">Compilation · POINTZERO Rec</span><span class="label">Jul 2026</span></div>
-          <h3>Lavin</h3>
-          <p>On Deep Circle Vol. 1, compiled by Geometek. Raw, deep, hypnotic techno.</p>
-          <div class="buy">
-            <a class="main" href="https://pointzer0rec.bandcamp.com/album/deep-circle-vol-1-compiled-by-geometek" target="_blank" rel="noopener">Bandcamp</a>
-            <a href="https://www.beatport.com/release/deep-circle-vol-1/7097906" target="_blank" rel="noopener">Beatport</a>
+        </li>
+        <li class="rel">
+          <img src="media/cover-deepcircle.jpg" alt="Cover of Deep Circle Vol. 1 on POINTZERO Rec" loading="lazy">
+          <div>
+            <span class="label">POINTZERO Rec · 2026</span>
+            <h3>Lavin</h3>
+            <div class="rlinks"><a href="https://pointzer0rec.bandcamp.com/album/deep-circle-vol-1-compiled-by-geometek" target="_blank" rel="noopener">Bandcamp ↗</a><a href="https://www.beatport.com/release/deep-circle-vol-1/7097906" target="_blank" rel="noopener">Beatport ↗</a></div>
           </div>
-        </article>
-        <article class="rel">
-          <div class="meta"><span class="label">Compilation · Transmissions</span><span class="label">Mar 2026</span></div>
-          <h3>Meet the Jazz</h3>
-          <p>On Transmissions 04, alongside AI404, 11.11Live and NotoriusPlug.</p>
-          <div class="buy">
-            <a class="main" href="https://transmissionss.bandcamp.com/track/varia-aves-meet-the-jazz" target="_blank" rel="noopener">Bandcamp</a>
+        </li>
+        <li class="rel">
+          <img src="media/cover-transmissions.jpg" alt="Cover of Transmissions 04" loading="lazy">
+          <div>
+            <span class="label">Transmissions · 2026</span>
+            <h3>Meet the Jazz</h3>
+            <div class="rlinks"><a href="https://transmissionss.bandcamp.com/track/varia-aves-meet-the-jazz" target="_blank" rel="noopener">Bandcamp ↗</a></div>
           </div>
-        </article>
-      </div>
+        </li>
+      </ul>
     </div>
   </section>
 
