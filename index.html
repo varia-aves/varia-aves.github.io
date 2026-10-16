@@ -92,7 +92,8 @@ section{padding-block:clamp(56px,8vw,110px);border-top:1px solid var(--line)}
 /* played at */
 .venues{list-style:none;margin:0;padding:0}
 .venues li{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line)}
-.venues li:first-child{border-top:1px solid var(--line)}
+#played .head{margin-bottom:18px}
+.venues li:last-child{border-bottom:0}
 .venues b{font-family:var(--display);font-weight:700;font-size:clamp(24px,4.4vw,52px);line-height:1.05;letter-spacing:-.01em}
 .venues li:hover b{color:var(--pink)}
 
@@ -196,8 +197,8 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <a href="#listen">Listen</a>
     <a href="#played">Played at</a>
     <a href="#booking">Booking</a>
-    <a href="#faq">FAQ</a>
     <a href="#photos">Photos</a>
+    <a href="#faq">FAQ</a>
   </nav>
   <p class="label">varia.aves@gmail.com</p>
 </aside>
@@ -280,6 +281,18 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     </div>
   </section>
 
+  <section id="photos">
+    <div class="wrap">
+      <div class="head"><h2>Photos</h2><span class="label">Press &amp; live</span></div>
+      <div class="gallery">
+        <figure><img src="media/sisyphos.jpg" alt="Varia Aves holding a modular case in front of the Sisyphos duck gate" loading="lazy"><figcaption class="label">Sisyphos</figcaption></figure>
+        <figure><img src="media/portrait.jpg" alt="Studio portrait of Varia Aves with pink hair, reaching toward the camera" loading="lazy"><figcaption class="label">Press</figcaption></figure>
+        <figure><img src="media/live-back.jpg" alt="Varia Aves seen from behind, patching a modular system in violet light" loading="lazy"><figcaption class="label">Live</figcaption></figure>
+        <figure><img src="media/alley-front.jpg" alt="Varia Aves in pink with a rainbow fur jacket, holding a patched modular case in a Berlin alley" loading="lazy"><figcaption class="label">Press</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
   <section id="faq">
     <div class="wrap">
       <div class="head"><h2>FAQ</h2><span class="label">Good to know</span></div>
@@ -312,17 +325,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     </div>
   </section>
 
-  <section id="photos">
-    <div class="wrap">
-      <div class="head"><h2>Photos</h2><span class="label">Press &amp; live</span></div>
-      <div class="gallery">
-        <figure><img src="media/sisyphos.jpg" alt="Varia Aves holding a modular case in front of the Sisyphos duck gate" loading="lazy"><figcaption class="label">Sisyphos</figcaption></figure>
-        <figure><img src="media/portrait.jpg" alt="Studio portrait of Varia Aves with pink hair, reaching toward the camera" loading="lazy"><figcaption class="label">Press</figcaption></figure>
-        <figure><img src="media/live-back.jpg" alt="Varia Aves seen from behind, patching a modular system in violet light" loading="lazy"><figcaption class="label">Live</figcaption></figure>
-        <figure><img src="media/alley-front.jpg" alt="Varia Aves in pink with a rainbow fur jacket, holding a patched modular case in a Berlin alley" loading="lazy"><figcaption class="label">Press</figcaption></figure>
-      </div>
-    </div>
-  </section>
 </main>
 
 <footer>
