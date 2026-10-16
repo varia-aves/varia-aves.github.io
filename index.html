@@ -44,7 +44,9 @@ h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,40px);lin
 .nav a{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:var(--muted)}
 .nav a:hover{color:var(--pink)}
 .name{font-family:var(--display);font-weight:700;font-size:clamp(56px,11vw,150px);line-height:.88;letter-spacing:-.02em;margin:0}
-.name span{display:block}
+.name span{display:block;width:max-content;white-space:nowrap}
+.namerow{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.namerow .burger{flex-shrink:0;margin-top:.4em}
 .name .b{color:var(--pink)}
 .tag{font-size:clamp(19px,2.2vw,24px);line-height:1.4;max-width:30ch;margin:28px 0 0;color:var(--ink)}
 .facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px;padding:0;list-style:none}
@@ -116,13 +118,13 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   .hero{min-height:0;padding-bottom:56px}
   .hero>.wrap:last-child,.hero>.wrap:last-child>div{display:contents}
   .cables{z-index:2;opacity:.85}
-  .hero .name,.hero .tag,.hero .facts,.hero .cta{order:4;position:relative;z-index:3;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
-  .hero .name{order:2;z-index:3}
+  .hero .namerow,.hero .tag,.hero .facts,.hero .cta{order:4;position:relative;z-index:3;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+  .hero .namerow{order:2;z-index:3}
+  .namerow .burger{margin-top:.2em}
   .hero .tag{margin-top:4px}
   .hero-bg{position:relative;order:3;height:64vw;max-height:480px;margin:-6vw 0 0;z-index:1}
   .hero-bg img{object-position:58% 30%}
   .hero-bg::after{background:linear-gradient(180deg,var(--ground) 0%,rgba(22,11,23,0) 26%,rgba(22,11,23,0) 75%,var(--ground) 100%)}
-  .hero .nav{margin-bottom:40px}
   .clip{max-width:360px}
   .gallery{grid-template-columns:repeat(2,1fr)}
   .card{min-height:360px}
@@ -168,13 +170,12 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     <path d="M-40 760 C 340 820, 600 560, 920 700 S 1300 420, 1500 820" stroke="var(--cable-g)"/>
     <path d="M200 -40 C 260 300, 80 520, 380 940" stroke="var(--cable-b)"/>
   </svg>
-  <div class="wrap nav" style="display:flex">
-    <span class="label">Live techno · Berlin</span>
-    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
-  </div>
   <div class="wrap">
     <div>
-      <h1 class="name"><span>Varia</span><span class="b">Aves</span></h1>
+      <div class="namerow">
+        <h1 class="name"><span class="a">Varia</span><span class="b">Aves</span></h1>
+        <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+      </div>
       <p class="tag">Raw, hypnotic techno played live on modular. Every set improvised, every night different.</p>
       <ul class="facts">
         <li>Building techno live</li><li>Eurorack + TR-1000</li><li>No backing tracks</li><li>Berlin</li>
@@ -348,6 +349,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(still){ draw(0); return; }
   (function loop(t){ draw(t||0); requestAnimationFrame(loop); })();
+})();
+(function(){
+  // stretch "Aves" with letter-spacing so its right edge lines up with "Varia"
+  var a=document.querySelector('.name .a'), v=document.querySelector('.name .b');
+  function fit(){
+    v.style.letterSpacing='';
+    var diff=a.getBoundingClientRect().width - v.getBoundingClientRect().width;
+    var base=parseFloat(getComputedStyle(v).letterSpacing)||0;
+    if(diff>0) v.style.letterSpacing=(base + diff/3)+'px';
+  }
+  fit();
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  window.addEventListener('resize',fit);
 })();
 (function(){
   var b=document.getElementById('burger'), d=document.getElementById('drawer'), s=document.getElementById('scrim'), c=document.getElementById('close');
