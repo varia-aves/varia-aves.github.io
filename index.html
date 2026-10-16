@@ -61,7 +61,8 @@ h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,40px);lin
 .cables path:nth-child(1){color:var(--cable-y)}.cables path:nth-child(2){color:var(--cable-o)}.cables path:nth-child(3){color:var(--cable-g)}.cables path:nth-child(4){color:var(--cable-b)}
 
 /* SECTIONS */
-section{padding-block:clamp(56px,8vw,110px);border-top:1px solid var(--line)}
+section{padding-block:clamp(44px,6vw,88px);border-top:1px solid var(--line)}
+#played{padding-bottom:clamp(24px,3vw,40px)}
 .head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:36px}
 
 /* about + live */
@@ -130,6 +131,21 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   .gallery{grid-template-columns:repeat(2,1fr)}
   .card{min-height:360px}
 }
+/* releases */
+.releases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.rel{display:flex;flex-direction:column;gap:14px;padding:24px;border:1px solid var(--line);border-radius:6px;background:var(--ground-2)}
+.rel .meta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rel h3{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,38px);line-height:1.05;margin:0}
+.rel p{margin:0;color:var(--muted);font-size:15px}
+.rel .tracks{list-style:none;margin:0;padding:0;font-size:15px}
+.rel .tracks li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
+.rel .tracks span:last-child{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.rel .buy{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto;padding-top:6px}
+.rel .buy a{font-size:14px;font-weight:600;text-decoration:none;padding:9px 16px;border-radius:999px;border:1.5px solid var(--pink)}
+.rel .buy a.main{background:var(--pink);color:var(--ground)}
+.rel .buy a:hover{background:var(--ink);border-color:var(--ink);color:var(--ground)}
+@media (max-width:860px){.releases{grid-template-columns:1fr}}
+
 /* burger + drawer */
 .burger{display:inline-flex;flex-direction:column;justify-content:center;gap:6px;width:46px;height:46px;padding:0 11px;border:1px solid var(--line);border-radius:999px;background:rgba(22,11,23,.55);backdrop-filter:blur(6px);cursor:pointer}
 .burger span{display:block;height:1.5px;background:var(--ink);border-radius:2px}
@@ -195,6 +211,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <nav>
     <a href="#live">Live</a>
     <a href="#listen">Listen</a>
+    <a href="#releases">Releases</a>
     <a href="#played">Played at</a>
     <a href="#booking">Booking</a>
     <a href="#photos">Photos</a>
@@ -247,6 +264,35 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
             <span class="play"><svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13.5 10.5v13l10.5-6.5z" fill="currentColor"/></svg>Listen on SoundCloud</span>
           </div>
         </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="releases">
+    <div class="wrap">
+      <div class="head"><h2>Releases</h2><span class="label">Out now</span></div>
+      <div class="releases">
+        <article class="rel">
+          <div class="meta"><span class="label">Single · Sisma Records</span><span class="label">Aug 2026</span></div>
+          <h3>Larp</h3>
+          <ul class="tracks">
+            <li><span>Larp (Original Mix)</span><span>5:33</span></li>
+            <li><span>Larp (Digital Sound System Remix)</span><span>5:30</span></li>
+          </ul>
+          <div class="buy">
+            <a class="main" href="https://www.beatport.com/release/larp/7181806" target="_blank" rel="noopener">Beatport</a>
+            <a href="https://open.spotify.com/album/7ov12JEEhIcjnN4A7uAnRs" target="_blank" rel="noopener">Spotify</a>
+          </div>
+        </article>
+        <article class="rel">
+          <div class="meta"><span class="label">Compilation · POINTZERO Rec</span><span class="label">Jul 2026</span></div>
+          <h3>Lavin</h3>
+          <p>On Deep Circle Vol. 1, compiled by Geometek. Raw, deep, hypnotic techno.</p>
+          <div class="buy">
+            <a class="main" href="https://pointzer0rec.bandcamp.com/album/deep-circle-vol-1-compiled-by-geometek" target="_blank" rel="noopener">Bandcamp</a>
+            <a href="https://www.beatport.com/release/deep-circle-vol-1/7097906" target="_blank" rel="noopener">Beatport</a>
+          </div>
+        </article>
       </div>
     </div>
   </section>
