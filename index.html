@@ -127,9 +127,33 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   .gallery{grid-template-columns:repeat(2,1fr)}
   .card{min-height:360px}
 }
+/* burger + drawer */
+.burger{display:inline-flex;flex-direction:column;justify-content:center;gap:6px;width:46px;height:46px;padding:0 11px;border:1px solid var(--line);border-radius:999px;background:rgba(22,11,23,.55);backdrop-filter:blur(6px);cursor:pointer}
+.burger span{display:block;height:1.5px;background:var(--ink);border-radius:2px}
+.burger span:nth-child(2){width:70%;align-self:flex-end;background:var(--pink)}
+.burger:hover{border-color:var(--pink)}
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,5,11,.6);backdrop-filter:blur(3px)}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:50;width:min(380px,86vw);background:var(--ground-2);border-left:1px solid var(--line);display:flex;flex-direction:column;gap:32px;padding:calc(20px + env(safe-area-inset-top,0px)) max(28px,env(safe-area-inset-right,0px)) calc(28px + env(safe-area-inset-bottom,0px)) 28px;transform:translateX(100%);visibility:hidden;transition:transform .35s cubic-bezier(.3,.7,.2,1),visibility 0s .35s}
+.drawer.open{transform:none;visibility:visible;transition:transform .35s cubic-bezier(.3,.7,.2,1)}
+.drawer .close{align-self:flex-end;width:46px;height:46px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);font-size:26px;line-height:1;cursor:pointer}
+.drawer nav{display:flex;flex-direction:column}
+.drawer nav a{font-family:var(--display);font-weight:700;font-size:28px;line-height:1.1;text-decoration:none;padding:12px 0;border-bottom:1px solid var(--line)}
+.drawer nav a:hover{color:var(--pink)}
+.drawer .label{margin:auto 0 0}
+
+/* faq */
+.faq{max-width:760px}
+.faq details{border-bottom:1px solid var(--line)}
+.faq details:first-child{border-top:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:20px 0;font-weight:600;font-size:clamp(18px,2vw,21px)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--mono);font-size:22px;color:var(--pink);transition:transform .25s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{margin:0 0 22px;max-width:60ch;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.drawer,.drawer.open{transition:none}}
+
 @media (max-width:440px){
   .rig div{grid-template-columns:1fr;gap:2px}
-  .nav nav{gap:14px}
 }
 </style>
 </head>
@@ -146,16 +170,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   </svg>
   <div class="wrap nav" style="display:flex">
     <span class="label">Live techno · Berlin</span>
-    <nav aria-label="Sections">
-      <a href="#live">Live</a><a href="#listen">Listen</a><a href="#played">Played at</a><a href="#booking">Booking</a>
-    </nav>
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
   </div>
   <div class="wrap">
     <div>
       <h1 class="name"><span>Varia</span><span class="b">Aves</span></h1>
       <p class="tag">Raw, hypnotic techno played live on modular. Every set improvised, every night different.</p>
       <ul class="facts">
-        <li>Live act</li><li>Eurorack + TR-1000</li><li>No backing tracks</li><li>Berlin</li>
+        <li>Building techno live</li><li>Eurorack + TR-1000</li><li>No backing tracks</li><li>Berlin</li>
       </ul>
       <div class="cta">
         <a class="btn solid" href="https://youtu.be/fFR2UMFRfBk" target="_blank" rel="noopener">▶ Watch live set</a>
@@ -164,6 +186,20 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     </div>
   </div>
 </header>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" aria-label="Menu" aria-hidden="true">
+  <button class="close" id="close" type="button" aria-label="Close menu">×</button>
+  <nav>
+    <a href="#live">Live</a>
+    <a href="#listen">Listen</a>
+    <a href="#played">Played at</a>
+    <a href="#photos">Photos</a>
+    <a href="#faq">FAQ</a>
+    <a href="#booking">Booking</a>
+  </nav>
+  <p class="label">varia.aves@gmail.com</p>
+</aside>
 
 <main>
   <section id="live">
@@ -236,6 +272,38 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     </div>
   </section>
 
+  <section id="faq">
+    <div class="wrap">
+      <div class="head"><h2>FAQ</h2><span class="label">Good to know</span></div>
+      <div class="faq">
+        <details>
+          <summary>How do I book Varia Aves?</summary>
+          <p>Send an email to varia.aves@gmail.com with the date, the venue or festival, the stage and the slot you have in mind. You'll get an answer within a few days.</p>
+        </details>
+        <details>
+          <summary>What does a booking cost?</summary>
+          <p>The fee depends on the event, the set length and travel. Send a short request with the details and you'll get a clear offer, no back and forth.</p>
+        </details>
+        <details>
+          <summary>Is it really all improvised?</summary>
+          <p>Yes. There are no backing tracks and no prepared arrangements. Every set is built live on the modular system and the TR-1000, and reacts to the room.</p>
+        </details>
+        <details>
+          <summary>How long can you play?</summary>
+          <p>Anything from 60 minutes up. The sets are at their best with time to build, so 90 minutes or longer, including sunrise and late-night slots.</p>
+        </details>
+        <details>
+          <summary>What do you need on site?</summary>
+          <p>A sturdy table, power, a stereo line into the mixer and a booth monitor. A short tech rider comes with every booking.</p>
+        </details>
+        <details>
+          <summary>Do you play outside Berlin?</summary>
+          <p>Yes. Varia Aves is based in Berlin and plays clubs and festivals across Europe.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <section id="booking">
     <div class="wrap book">
       <div>
@@ -280,6 +348,19 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(still){ draw(0); return; }
   (function loop(t){ draw(t||0); requestAnimationFrame(loop); })();
+})();
+(function(){
+  var b=document.getElementById('burger'), d=document.getElementById('drawer'), s=document.getElementById('scrim'), c=document.getElementById('close');
+  function set(open){
+    d.classList.toggle('open',open); s.hidden=!open;
+    d.setAttribute('aria-hidden',String(!open)); b.setAttribute('aria-expanded',String(open));
+    if(open) c.focus(); else b.focus({preventScroll:true});
+  }
+  b.addEventListener('click',function(){ set(true); });
+  c.addEventListener('click',function(){ set(false); });
+  s.addEventListener('click',function(){ set(false); });
+  d.querySelectorAll('nav a').forEach(function(a){ a.addEventListener('click',function(){ set(false); }); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && d.classList.contains('open')) set(false); });
 })();
 document.getElementById('copy').addEventListener('click', function(){
   var b=this, t='varia.aves@gmail.com';
