@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Varia Aves</title>
+<meta name="description" content="Varia Aves – Berlin live techno on modular. Fully improvised, no backing tracks.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-bleed poster hero with patch cables running across, then a narrow editorial column of sections; single dark "club" theme by choice */
+:root{
+  --ground:#160b17;      /* plum black, the room */
+  --ground-2:#21122a;    /* raised surface */
+  --ink:#f6eaf2;         /* warm white */
+  --muted:#b9a2b4;
+  --pink:#e8629f;        /* hair + skirt, a touch deeper */
+  --cable-y:#d9b866; --cable-o:#d8875a; --cable-g:#9fbf8a; --cable-b:#8fb8d6;
+  --line:rgba(246,234,242,.11);
+  --display:"Unbounded",system-ui,sans-serif;
+  --body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--pink);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,40px);line-height:1.1;margin:0;text-wrap:balance}
+
+/* HERO */
+.hero{position:relative;padding-block:clamp(28px,6vw,64px) clamp(48px,8vw,110px);overflow:hidden;min-height:min(820px,92vh);display:flex;flex-direction:column}
+.hero>.wrap:last-child{margin-top:auto;width:100%}
+.hero .wrap{position:relative;z-index:2}
+.hero-bg{position:absolute;inset:0;z-index:0;margin:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:62% 30%;display:block}
+.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(22,11,23,.92) 0%,rgba(22,11,23,.55) 38%,rgba(22,11,23,0) 65%),linear-gradient(180deg,rgba(22,11,23,0) 55%,var(--ground) 100%)}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:clamp(32px,6vw,72px);position:relative;z-index:2}
+.nav nav{display:flex;gap:20px;flex-wrap:wrap}
+.nav a{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:var(--muted)}
+.nav a:hover{color:var(--pink)}
+.name{font-family:var(--display);font-weight:700;font-size:clamp(56px,11vw,150px);line-height:.88;letter-spacing:-.02em;margin:0}
+.name span{display:block}
+.name .b{color:var(--pink)}
+.tag{font-size:clamp(19px,2.2vw,24px);line-height:1.4;max-width:30ch;margin:28px 0 0;color:var(--ink)}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px;padding:0;list-style:none}
+.facts li{font-family:var(--mono);font-size:12px;letter-spacing:.06em;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--ink)}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.btn{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:15px;text-decoration:none;padding:13px 22px;border-radius:999px;border:1.5px solid var(--pink);transition:background .2s,color .2s}
+.btn.solid{background:var(--pink);color:var(--ground)}
+.btn.solid:hover{background:var(--ink);border-color:var(--ink)}
+.btn.ghost:hover{background:var(--pink);color:var(--ground)}
+.cables{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:.75}
+.cables path{fill:none;stroke-width:1.8;stroke-linecap:round;vector-effect:non-scaling-stroke;filter:drop-shadow(0 0 6px currentColor)}
+.cables path:nth-child(1){color:var(--cable-y)}.cables path:nth-child(2){color:var(--cable-o)}.cables path:nth-child(3){color:var(--cable-g)}.cables path:nth-child(4){color:var(--cable-b)}
+
+/* SECTIONS */
+section{padding-block:clamp(56px,8vw,110px);border-top:1px solid var(--line)}
+.head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:36px}
+
+/* about + live */
+.live{display:grid;grid-template-columns:1fr minmax(0,360px);gap:clamp(28px,5vw,72px);align-items:start}
+.live p{margin:0 0 18px;max-width:58ch;color:var(--ink)}
+.live p.lead{font-size:clamp(20px,2.4vw,26px);line-height:1.4;font-weight:500}
+.live p.lead em{font-style:normal;color:var(--pink)}
+.rig{margin-top:30px;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.rig div{display:grid;grid-template-columns:130px 1fr;gap:16px;padding:12px 16px;border-top:1px solid var(--line);font-size:15px}
+.rig div:first-child{border-top:0}
+.rig dt{margin:0}.rig dd{margin:0;min-width:0}
+.clip{position:relative;margin:0}
+.clip video{display:block;width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:6px;background:var(--ground-2)}
+.clip figcaption{margin-top:10px}
+
+/* listen */
+.listen{display:grid;grid-template-columns:1.3fr 1fr;gap:20px}
+.card{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:420px;border-radius:6px;overflow:hidden;text-decoration:none;isolation:isolate}
+.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .6s ease}
+.card::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(22,11,23,0) 35%,rgba(22,11,23,.92))}
+.card:hover img{transform:scale(1.04)}
+.card .in{padding:24px}
+.card h3{font-family:var(--display);font-weight:700;font-size:clamp(20px,2.4vw,28px);line-height:1.15;margin:6px 0 8px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.play{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-weight:600;color:var(--pink)}
+.play svg{width:34px;height:34px}
+
+/* played at */
+.venues{list-style:none;margin:0;padding:0}
+.venues li{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line)}
+.venues li:first-child{border-top:1px solid var(--line)}
+.venues b{font-family:var(--display);font-weight:700;font-size:clamp(24px,4.4vw,52px);line-height:1.05;letter-spacing:-.01em}
+.venues li:hover b{color:var(--pink)}
+
+/* gallery */
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.gallery figure{margin:0}
+.gallery img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:4px}
+.gallery figcaption{margin-top:8px}
+
+/* booking */
+.book{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end}
+.mail{font-family:var(--display);font-weight:700;font-size:clamp(22px,4.6vw,54px);line-height:1.1;word-break:break-all;margin:18px 0 0;user-select:all}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+button.btn{font:inherit;font-weight:600;font-size:15px;cursor:pointer;background:transparent;color:var(--ink)}
+.links{display:flex;flex-direction:column;gap:2px;min-width:200px}
+.links a{display:flex;justify-content:space-between;gap:24px;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none;font-weight:500}
+.links a:hover{color:var(--pink)}
+footer{padding-block:28px 40px;border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .live,.listen,.book{grid-template-columns:1fr}
+  .hero{min-height:0;padding-bottom:56px}
+  .hero>.wrap:last-child,.hero>.wrap:last-child>div{display:contents}
+  .cables{z-index:2;opacity:.85}
+  .hero .name,.hero .tag,.hero .facts,.hero .cta{order:4;position:relative;z-index:3;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+  .hero .name{order:2;z-index:3}
+  .hero .tag{margin-top:4px}
+  .hero-bg{position:relative;order:3;height:64vw;max-height:480px;margin:-6vw 0 0;z-index:1}
+  .hero-bg img{object-position:58% 30%}
+  .hero-bg::after{background:linear-gradient(180deg,var(--ground) 0%,rgba(22,11,23,0) 26%,rgba(22,11,23,0) 75%,var(--ground) 100%)}
+  .hero .nav{margin-bottom:40px}
+  .clip{max-width:360px}
+  .gallery{grid-template-columns:repeat(2,1fr)}
+  .card{min-height:360px}
+}
+@media (max-width:440px){
+  .rig div{grid-template-columns:1fr;gap:2px}
+  .nav nav{gap:14px}
+}
+</style>
+</head>
+<body>
+
+
+<header class="hero">
+  <figure class="hero-bg"><img src="media/passionskirche.jpg" alt="Varia Aves playing a modular system live in the dark nave of the Passionskirche Berlin" fetchpriority="high"></figure>
+  <svg class="cables" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M-40 120 C 300 40, 420 420, 760 300 S 1200 80, 1500 260" stroke="var(--cable-y)"/>
+    <path d="M-40 520 C 260 640, 520 200, 860 460 S 1260 760, 1500 560" stroke="var(--cable-o)"/>
+    <path d="M-40 760 C 340 820, 600 560, 920 700 S 1300 420, 1500 820" stroke="var(--cable-g)"/>
+    <path d="M200 -40 C 260 300, 80 520, 380 940" stroke="var(--cable-b)"/>
+  </svg>
+  <div class="wrap nav" style="display:flex">
+    <span class="label">Live techno · Berlin</span>
+    <nav aria-label="Sections">
+      <a href="#live">Live</a><a href="#listen">Listen</a><a href="#played">Played at</a><a href="#booking">Booking</a>
+    </nav>
+  </div>
+  <div class="wrap">
+    <div>
+      <h1 class="name"><span>Varia</span><span class="b">Aves</span></h1>
+      <p class="tag">Raw, hypnotic techno played live on modular. Every set improvised, every night different.</p>
+      <ul class="facts">
+        <li>Live act</li><li>Eurorack + TR-1000</li><li>No backing tracks</li><li>Berlin</li>
+      </ul>
+      <div class="cta">
+        <a class="btn solid" href="https://youtu.be/fFR2UMFRfBk" target="_blank" rel="noopener">▶ Watch live set</a>
+        <a class="btn ghost" href="#booking">Booking</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="live">
+    <div class="wrap live">
+      <div>
+        <div class="head"><h2>Live, from scratch</h2><span class="label">About</span></div>
+        <p class="lead">Varia Aves builds techno in real time on a modular system. <em>No backing tracks, no prepared arrangements.</em></p>
+        <p>Patterns start small, grow, mutate and collide while the room is dancing. The first minutes lay down a pulse; by minute forty the synth lines take turns nobody planned, the artist included. The sound sits between hypnotic and playful: driving rhythm underneath, curious, bending melodies on top.</p>
+        <p>Based in Berlin, Varia Aves has played Sisyphos, ://about blank and ANDEREWELT. Festival, and brings the same open-ended approach to every floor, from a sunrise slot to the peak of the night.</p>
+        <dl class="rig">
+          <div><dt class="label">Format</dt><dd>Live performance, fully improvised</dd></div>
+          <div><dt class="label">Setup</dt><dd>Eurorack modular system, Roland TR-1000</dd></div>
+          <div><dt class="label">Set length</dt><dd>Flexible, best at 90 min and longer</dd></div>
+          <div><dt class="label">Sound</dt><dd>Raw, hypnotic, playful techno</dd></div>
+        </dl>
+      </div>
+      <figure class="clip">
+        <video src="media/live2.mp4" poster="media/live2-poster.jpg" autoplay muted loop playsinline aria-label="Short clip from the dancefloor during a Varia Aves live set, light beams cutting through haze"></video>
+        <figcaption class="label">Live, October 2026</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="listen">
+    <div class="wrap">
+      <div class="head"><h2>Listen &amp; watch</h2><span class="label">Recordings</span></div>
+      <div class="listen">
+        <a class="card" href="https://youtu.be/fFR2UMFRfBk" target="_blank" rel="noopener">
+          <img src="media/yt-studio.jpg" alt="" loading="lazy" style="object-position:52% 45%">
+          <div class="in">
+            <span class="label">YouTube · Live performance</span>
+            <h3>Live at FLOW by Projektil, Passionskirche Berlin</h3>
+            <p>Full live set, filmed on the night.</p>
+            <span class="play"><svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13.5 10.5v13l10.5-6.5z" fill="currentColor"/></svg>Watch the set</span>
+          </div>
+        </a>
+        <a class="card" href="https://on.soundcloud.com/bLrwi65j3UOjaRlMOd" target="_blank" rel="noopener">
+          <img src="media/live-blue.jpg" alt="" loading="lazy">
+          <div class="in">
+            <span class="label">SoundCloud · Live recording</span>
+            <h3>Latest live set</h3>
+            <p>Recorded live, unedited.</p>
+            <span class="play"><svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M13.5 10.5v13l10.5-6.5z" fill="currentColor"/></svg>Listen on SoundCloud</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="played">
+    <div class="wrap">
+      <div class="head"><h2>Played at</h2><span class="label">Selected</span></div>
+      <ul class="venues">
+        <li><b>Sisyphos</b><span class="label">Club · Berlin</span></li>
+        <li><b>://about blank</b><span class="label">Club · Berlin</span></li>
+        <li><b>ANDEREWELT. Festival</b><span class="label">Festival · Germany</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="photos">
+    <div class="wrap">
+      <div class="head"><h2>Photos</h2><span class="label">Press &amp; live</span></div>
+      <div class="gallery">
+        <figure><img src="media/sisyphos.jpg" alt="Varia Aves holding a modular case in front of the Sisyphos duck gate" loading="lazy"><figcaption class="label">Sisyphos</figcaption></figure>
+        <figure><img src="media/portrait.jpg" alt="Studio portrait of Varia Aves with pink hair, reaching toward the camera" loading="lazy"><figcaption class="label">Press</figcaption></figure>
+        <figure><img src="media/live-back.jpg" alt="Varia Aves seen from behind, patching a modular system in violet light" loading="lazy"><figcaption class="label">Live</figcaption></figure>
+        <figure><img src="media/alley-front.jpg" alt="Varia Aves in pink with a rainbow fur jacket, holding a patched modular case in a Berlin alley" loading="lazy"><figcaption class="label">Press</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="booking">
+    <div class="wrap book">
+      <div>
+        <span class="label">Booking &amp; press</span>
+        <p class="mail" id="mail">varia.aves@gmail.com</p>
+        <div class="row">
+          <button class="btn solid" id="copy" type="button">Copy email</button>
+          <a class="btn ghost" href="mailto:varia.aves@gmail.com">Write an email</a>
+        </div>
+      </div>
+      <div class="links">
+        <a href="https://youtu.be/fFR2UMFRfBk" target="_blank" rel="noopener">YouTube <span aria-hidden="true">↗</span></a>
+        <a href="https://soundcloud.com/varia_aves" target="_blank" rel="noopener">SoundCloud <span aria-hidden="true">↗</span></a>
+        <a href="https://open.spotify.com/artist/0FmHyiLRUAzilULTVvwmrZ" target="_blank" rel="noopener">Spotify <span aria-hidden="true">↗</span></a>
+        <a href="https://instagram.com/varia.aves" target="_blank" rel="noopener">Instagram <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap"><span class="label">Varia Aves · Berlin</span><span class="label">Live modular techno</span></div>
+</footer>
+
+<script>
+(function(){
+  // each cable: two-segment cubic; anchors drift on slow sine waves so the cables sway like they hang off a patched rack
+  var C=[
+    {p:[-40,120,300,40,420,420,760,300,1200,80,1500,260],a:70,s:.00031,ph:0},
+    {p:[-40,520,260,640,520,200,860,460,1260,760,1500,560],a:85,s:.00024,ph:1.7},
+    {p:[-40,760,340,820,600,560,920,700,1300,420,1500,820],a:65,s:.00028,ph:3.1},
+    {p:[200,-40,260,300,80,520,380,940,380,940,380,940],a:60,s:.00021,ph:4.4,vx:1}
+  ];
+  var paths=document.querySelectorAll('.cables path');
+  function d(c,t){
+    var q=c.p.slice(), w=function(i,k){return Math.sin(t*c.s*(1+k*.37)+c.ph+k*1.9)*c.a*(k%2?1:.8);};
+    if(c.vx){ q[2]+=w(0,1); q[4]+=w(0,2); q[6]+=w(0,3)*.5; }
+    else { q[3]+=w(0,1); q[5]+=w(0,2); q[7]+=w(0,3)*.6; q[9]+=w(0,4); q[2]+=w(0,5)*.4; q[8]+=w(0,6)*.4; }
+    return 'M'+q[0]+' '+q[1]+' C'+q[2]+' '+q[3]+', '+q[4]+' '+q[5]+', '+q[6]+' '+q[7]+' S'+q[8]+' '+q[9]+', '+q[10]+' '+q[11];
+  }
+  function draw(t){ for(var i=0;i<C.length;i++) paths[i].setAttribute('d',d(C[i],t)); }
+  var still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(still){ draw(0); return; }
+  (function loop(t){ draw(t||0); requestAnimationFrame(loop); })();
+})();
+document.getElementById('copy').addEventListener('click', function(){
+  var b=this, t='varia.aves@gmail.com';
+  function done(){ b.textContent='Copied'; setTimeout(function(){ b.textContent='Copy email'; },1800); }
+  function fallback(){ var r=document.createRange(); r.selectNodeContents(document.getElementById('mail')); var s=getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent='Selected, press copy'; }
+  try{ navigator.clipboard.writeText(t).then(done, fallback); }catch(e){ fallback(); }
+});
+</script>
+
+</body>
+</html>
