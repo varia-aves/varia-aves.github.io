@@ -396,6 +396,13 @@
     <div class="section-label">Audio</div>
     <button class="upload-btn" id="audio-btn">+ Audio laden</button>
     <div id="audio-info" style="margin-top:0.5rem;font-size:10px;color:#666;letter-spacing:0.06em;"></div>
+    <button type="button" id="sc-toggle" hidden style="margin-top:0.6rem;background:none;border:none;padding:0;color:var(--mute,#888);font:inherit;font-size:11px;letter-spacing:.08em;text-decoration:underline;cursor:pointer;">oder SoundCloud-Link statt Datei</button>
+    <div id="sc-panel" hidden style="margin-top:0.5rem;">
+      <div class="field" style="display:flex;gap:6px;"><input type="text" id="sc-url" placeholder="https://soundcloud.com/…" style="flex:1;min-width:0;"><button class="upload-btn" id="sc-load" style="white-space:nowrap;">laden</button></div>
+      <div id="sc-frame"></div>
+      <div id="sc-info" style="margin-top:0.5rem;font-size:11px;line-height:1.5;color:var(--mute,#888);"></div>
+      <button class="upload-btn" id="sc-cap-btn" hidden style="margin-top:0.5rem;">Tab-Ton freigeben</button>
+    </div>
     <div id="audio-warn" style="display:none;margin-top:0.5rem;font-size:11px;line-height:1.5;color:#ffb347;">⚠ Sehr langes Set: das Dekodieren braucht viel Arbeitsspeicher. Falls es nicht lädt, exportiere die Datei als 128-kbps-MP3 (max. ca. 2 h) oder lade nur die erste Hälfte.</div>
   </div>
 </div>
@@ -1336,6 +1343,202 @@ async function tryLazy(file,kind){
   }
 }
 
+// ===== SoundCloud-Modus: Wiedergabe über das SoundCloud-Widget, Export als Echtzeit-Aufnahme =====
+let scMode=false, scWidget=null, scPos=0, scPosAt=0, scPlaying=false, scCap=null;
+const scEl={
+  toggle:document.getElementById('sc-toggle'), panel:document.getElementById('sc-panel'),
+  url:document.getElementById('sc-url'), load:document.getElementById('sc-load'),
+  frame:document.getElementById('sc-frame'), info:document.getElementById('sc-info'),
+  cap:document.getElementById('sc-cap-btn')
+};
+function scMsg(t,warn){scEl.info.textContent=t;scEl.info.style.color=warn?'#ffb347':'';}
+function scNow(){return scPos+(scPlaying?(performance.now()-scPosAt)/1000:0);}
+
+(function loadScApi(){
+  const s=document.createElement('script');s.src='https://w.soundcloud.com/player/api.js';
+  s.onload=()=>{if(window.SC&&SC.Widget)scEl.toggle.hidden=false;};
+  s.onerror=()=>{};
+  document.head.appendChild(s);
+})();
+scEl.toggle.addEventListener('click',()=>{scEl.panel.hidden=!scEl.panel.hidden;});
+
+function scLeave(){
+  if(scWidget){try{scWidget.pause();}catch(e){}}
+  scMode=false;scPlaying=false;scEl.frame.innerHTML='';scWidget=null;scMsg('');
+  scEl.cap.hidden=true;
+}
+
+function scLoadUrl(url){
+  url=(url||'').trim();
+  if(!/^https?:\/\/(www\.|m\.)?(soundcloud\.com|on\.soundcloud\.com)\//i.test(url)){scMsg('⚠ Bitte einen soundcloud.com-Link einfügen.',true);return;}
+  stopFake();stopAllAudio(false);teardownMedia();lazy=null;lastWin=null;audioBuffer=null;scMode=false;scPlaying=false;
+  scMsg('lädt...');
+  scEl.frame.innerHTML='';
+  const ifr=document.createElement('iframe');
+  ifr.allow='autoplay';ifr.height='120';ifr.style.cssText='width:100%;border:0;margin-top:8px';
+  ifr.src='https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&auto_play=false&hide_related=true&show_comments=false&show_user=true&visual=false';
+  scEl.frame.appendChild(ifr);
+  const w=SC.Widget(ifr);scWidget=w;
+  let done=false;
+  const fail=setTimeout(()=>{if(!done)scMsg('⚠ SoundCloud antwortet nicht. Link prüfen oder Seite neu laden.',true);},15000);
+  w.bind(SC.Widget.Events.READY,()=>{
+    w.getDuration(ms=>{
+      if(!ms){scMsg('⚠ Dieser Link lässt sich nicht abspielen.',true);return;}
+      done=true;clearTimeout(fail);
+      if(!audioCtx)audioCtx=new AudioContext();
+      audioBuffer={duration:ms/1000,sampleRate:44100,numberOfChannels:2,sc:true};
+      scMode=true;
+      w.bind(SC.Widget.Events.PLAY_PROGRESS,d=>{scPos=d.currentPosition/1000;scPosAt=performance.now();});
+      w.bind(SC.Widget.Events.PLAY,()=>{scPlaying=true;scPosAt=performance.now();});
+      w.bind(SC.Widget.Events.PAUSE,()=>{scPlaying=false;});
+      w.bind(SC.Widget.Events.FINISH,()=>{scPlaying=false;});
+      const btn=document.getElementById('audio-btn');btn.textContent='+ Audio laden';btn.classList.remove('loaded');
+      document.getElementById('audio-warn').style.display='none';
+      document.getElementById('audio-info').textContent=`SoundCloud · ${fmt(audioBuffer.duration)}`;
+      scMsg('Mit Link geht kein direkter Export. Die Snippets werden in Echtzeit aufgenommen, ein 30-s-Snippet dauert also 30 s. Der Ton bleibt dabei an.');
+      scEl.cap.hidden=false;scUpdateCapBtn();
+      seekPos=0;updateSeekUI(0);checkExportReady();seedHistory();startFake();updateAllSnipStatuses();
+    });
+  });
+}
+scEl.load.addEventListener('click',()=>scLoadUrl(scEl.url.value));
+scEl.url.addEventListener('keydown',e=>{if(e.key==='Enter')scLoadUrl(scEl.url.value);});
+
+function scUpdateCapBtn(){scEl.cap.textContent=scCap?'Tab-Ton freigegeben ✓ (beenden)':'Tab-Ton freigeben';}
+scEl.cap.addEventListener('click',()=>{
+  if(scCap){scCapStop();return;}
+  scEnsureCapture();
+});
+function scCapStop(){
+  if(scCap){try{scCap.st.getTracks().forEach(t=>t.stop());}catch(e){}try{scCap.src.disconnect();}catch(e){}}
+  scCap=null;scUpdateCapBtn();
+}
+async function scEnsureCapture(){
+  if(scCap&&scCap.st.getAudioTracks().some(t=>t.readyState==='live'))return true;
+  scCap=null;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){scMsg('⚠ Dein Browser kann den Tab-Ton nicht aufnehmen. Bitte Chrome oder Edge nutzen.',true);return false;}
+  let st;
+  try{st=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true,preferCurrentTab:true,selfBrowserSurface:'include',systemAudio:'exclude'});}
+  catch(err){scMsg('⚠ Freigabe abgebrochen. Ohne Tab-Ton keine Aufnahme.',true);return false;}
+  const at=st.getAudioTracks();
+  if(!at.length){st.getTracks().forEach(t=>t.stop());scMsg('⚠ Kein Ton freigegeben. „Diesen Tab" wählen und „Tab-Audio teilen" aktivieren.',true);return false;}
+  if(!audioCtx)audioCtx=new AudioContext();
+  try{await audioCtx.resume();}catch(e){}
+  const src=audioCtx.createMediaStreamSource(new MediaStream(at));
+  const an=audioCtx.createAnalyser();an.fftSize=2048;an.smoothingTimeConstant=0.55;
+  const dest=audioCtx.createMediaStreamDestination();
+  src.connect(an);src.connect(dest); // nicht an die Lautsprecher: der Tab spielt den Ton selbst
+  scCap={st,src,an,dest};
+  at[0].addEventListener('ended',()=>{scCap=null;scUpdateCapBtn();});
+  scUpdateCapBtn();scMsg('Tab-Ton freigegeben.');
+  return true;
+}
+
+// springt zur Position und wartet, bis SoundCloud wirklich dort spielt
+function scSeekPlayAndWait(sec,timeoutMs=15000){
+  return new Promise(resolve=>{
+    const t0=performance.now();let lastSeek=0,played=false;
+    scPlaying=false;
+    try{scWidget.play();}catch(e){}
+    const iv=setInterval(()=>{
+      const now=performance.now();
+      if(!scMode){clearInterval(iv);resolve(false);return;}
+      if(now-t0>timeoutMs){clearInterval(iv);resolve(false);return;}
+      if(scPlaying)played=true;
+      if(played&&now-lastSeek>1500&&Math.abs(scNow()-sec)>1.0){lastSeek=now;try{scWidget.seekTo(sec*1000);}catch(e){}}
+      if(played&&scPlaying&&Math.abs(scNow()-sec)<=1.0&&now-lastSeek>250){clearInterval(iv);resolve(true);}
+    },100);
+  });
+}
+
+function scFakeBands(){
+  fakeTick++;
+  const f=new Float32Array(32);
+  for(let j=0;j<32;j++)f[j]=Math.max(0,Math.min(1,0.05+Math.abs(Math.sin(fakeTick*0.05+j*0.4))*0.13+Math.abs(Math.sin(fakeTick*0.03+j*0.7+1))*0.09));
+  return f;
+}
+
+// Vorschau und normales Abspielen: Ton kommt vom Widget, die Waveform vom freigegebenen Tab-Ton (sonst ruhige Platzhalter-Animation)
+function scPlay(from,dur,isSnippet,onTick,onEnd,totalDur){
+  const token=++playToken;
+  scSeekPlayAndWait(from).then(ok=>{
+    if(token!==playToken)return;
+    if(!ok){stopAllAudio(true);scMsg('⚠ SoundCloud antwortet nicht.',true);return;}
+    isPlaying=true;isSnippetPlaying=isSnippet;
+    if(!isSnippet){playBtn.textContent='■ Stop';playBtn.classList.add('playing');}
+    let primed=false,stall=0;
+    function loop(){
+      if(!isPlaying||token!==playToken)return;
+      const pos=scNow();
+      if((dur!=null&&pos>=from+dur)||pos>=audioBuffer.duration-0.05||(!scPlaying&&++stall>90)){stopAllAudio(true);if(onEnd)onEnd();return;}
+      if(scPlaying)stall=0;
+      const norm=scCap?extractLogBands(scCap.an):scFakeBands();
+      if(!primed){waveHistory=Array.from({length:HISTORY},()=>norm.slice());primed=true;}
+      pushHistory(norm);
+      seekPos=pos;updateSeekUI(pos);
+      if(isSnippet&&onTick)onTick(pos,totalDur);
+      draw(1);
+      animFrame=requestAnimationFrame(loop);
+    }
+    loop();
+  });
+}
+
+// Export: Echtzeit-Aufnahme von Canvas + Tab-Ton
+async function recordSegmentSC(playFrom,playDur,filename,onDone){
+  const finish=()=>{try{scWidget.pause();}catch(e){}isPlaying=false;isSnippetPlaying=false;if(onDone)onDone();};
+  if(!scCap){exportProgress.textContent='⚠ Tab-Ton nicht freigegeben';finish();return;}
+  try{await audioCtx.resume();}catch(e){}
+  const safePreroll=Math.min(PREROLL,playFrom);
+  const startPos=playFrom-safePreroll;
+  exportProgress.textContent=`● ${filename} · SoundCloud startet`;
+  const ok=await scSeekPlayAndWait(startPos);
+  if(!ok){exportProgress.textContent='⚠ SoundCloud antwortet nicht';finish();return;}
+  isPlaying=true;isSnippetPlaying=true;seedHistory();
+  let recorder=null,chunks=[],recordingStarted=false,primed=false,stall=0;
+  const mime=['video/mp4;codecs=avc1.640028,mp4a.40.2','video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(m=>MediaRecorder.isTypeSupported(m))||'video/webm';
+  const isMp4=mime.startsWith('video/mp4');
+  function loop(){
+    const pos=scNow();
+    const inPreroll=pos<playFrom;
+    const audioElapsed=Math.max(0,pos-playFrom);
+    if(!scPlaying&&++stall>150){ // länger als ca. 2,5 s ohne Ton: abbrechen
+      if(recorder&&recorder.state!=='inactive'){recorder.onstop=null;recorder.stop();}
+      exportProgress.textContent='⚠ Wiedergabe unterbrochen';finish();return;
+    }
+    if(scPlaying)stall=0;
+    if(audioElapsed>=playDur){
+      try{scWidget.pause();}catch(e){}
+      if(recorder&&recorder.state!=='inactive')recorder.stop();
+      isPlaying=false;isSnippetPlaying=false;return;
+    }
+    const norm=extractLogBands(scCap.an);
+    if(!primed){waveHistory=Array.from({length:HISTORY},()=>norm.slice());primed=true;}
+    fakeTick++;pushHistory(norm);
+    seekPos=pos;
+    draw(inPreroll?0.4:1);
+    updateSeekUI(seekPos);
+    if(!inPreroll&&!recordingStarted){
+      recordingStarted=true;
+      const canvasStream=canvas.captureStream(30);
+      const combined=new MediaStream([...canvasStream.getTracks(),...scCap.dest.stream.getAudioTracks()]);
+      recorder=new MediaRecorder(combined,{mimeType:mime});
+      chunks=[];
+      recorder.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+      recorder.onstop=()=>{
+        const blob=new Blob(chunks,{type:isMp4?'video/mp4':'video/webm'});
+        const safeName=(document.getElementById('name-input').value||'visualizer').toLowerCase().replace(/\s+/g,'-');
+        const safeFile=filename.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+        offerFile(blob,`${safeName}-${safeFile}.${isMp4?'mp4':'webm'}`);
+        if(onDone)onDone();
+      };
+      recorder.start(100);
+    }
+    animFrame=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
 document.getElementById('photo-btn').addEventListener('click',()=>document.getElementById('file-photo').click());
 document.getElementById('audio-btn').addEventListener('click',()=>document.getElementById('file-audio').click());
 document.getElementById('file-photo').addEventListener('change',e=>{
@@ -1351,7 +1554,7 @@ document.getElementById('file-photo').addEventListener('change',e=>{
 document.getElementById('file-audio').addEventListener('change',async e=>{
   const file=e.target.files[0];if(!file)return;
   stopFake();stopAllAudio(false);
-  teardownMedia();lazy=null;lastWin=null;audioBuffer=null;
+  teardownMedia();lazy=null;lastWin=null;audioBuffer=null;scLeave();
   const btn=document.getElementById('audio-btn');btn.textContent='↻ lädt...';
   const warn=document.getElementById('audio-warn');
   let kind=null;try{kind=await detectKind(file);}catch(err){}
@@ -1395,6 +1598,7 @@ document.getElementById('file-audio').addEventListener('change',async e=>{
 // playback
 function stopAllAudio(restartFake=true){
   playToken++;
+  if(scMode&&scWidget){try{scWidget.pause();}catch(e){}}
   if(mediaEl){try{mediaEl.pause();}catch(e){}}
   if(source){try{source.stop();}catch(e){}}
   source=null;isPlaying=false;isSnippetPlaying=false;previewingSnipId=null;
@@ -1406,6 +1610,7 @@ function stopAllAudio(restartFake=true){
 }
 
 function playSegment(playFrom,playDur,totalDur,isSnippet,onTick,onEnd){
+  if(scMode&&audioBuffer)return scPlay(playFrom,playDur,isSnippet,onTick,onEnd,totalDur);
   if(!audioBuffer||!audioCtx)return;
   const token=++playToken;
   if(source){try{source.stop();}catch(e){}}
@@ -1470,6 +1675,7 @@ function startFullPlaybackLazy(from){
 
 function startFullPlayback(from){
   if(!audioBuffer||!audioCtx)return;
+  if(scMode)return scPlay(from,null,false,null,null,audioBuffer.duration);
   if(lazy)return startFullPlaybackLazy(from);
   if(source){try{source.stop();}catch(e){}}
   // player mode: no preroll, instant start, but shows waveform live
@@ -1694,8 +1900,15 @@ exportAllBtn.addEventListener('click',()=>{
   const valid=snippets.filter(s=>{const st=parseTime(s.from),en=parseTime(s.to);return st!==null&&en!==null&&en>st&&en<=audioBuffer.duration;});
   if(!valid.length)return;
   stopAllAudio(false);stopFake();
-  isExporting=true;exportAllBtn.disabled=true;exportAllBtn.textContent='↻ exportiert...';exportResults.innerHTML='';
-  pickScale().then(sc=>{setOutScale(sc);exportQueue(valid,0);});
+  const go=(sc)=>{
+    isExporting=true;exportAllBtn.disabled=true;exportAllBtn.textContent='↻ exportiert...';exportResults.innerHTML='';
+    setOutScale(sc);exportQueue(valid,0);
+  };
+  if(scMode){ exportAllBtn.disabled=true; // Tab-Ton muss direkt aus dem Klick heraus freigegeben werden
+    scEnsureCapture().then(ok=>{if(ok)go(1);else{exportProgress.textContent='Export abgebrochen: Tab-Ton nicht freigegeben';seedHistory();startFake();}});
+    return;
+  }
+  pickScale().then(sc=>{go(sc);});
 });
 
 
@@ -1882,7 +2095,7 @@ function exportQueue(snips,idx){
   }
   const snip=snips[idx];const s=parseTime(snip.from),e=parseTime(snip.to);activeTrack=snip.track||'';
   exportProgress.textContent=`● ${idx+1}/${snips.length} — ${snip.name||fmt(s)}`;
-  (offlineOK&&audioBuffer?renderOffline:recordSegment)(s,e-s,snip.name||`snippet-${idx+1}`,()=>exportQueue(snips,idx+1));
+  (scMode?recordSegmentSC:(offlineOK&&audioBuffer?renderOffline:recordSegment))(s,e-s,snip.name||`snippet-${idx+1}`,()=>exportQueue(snips,idx+1));
 }
 
 function recordSegment(playFrom,playDur,filename,onDone){
