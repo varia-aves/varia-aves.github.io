@@ -193,6 +193,10 @@
   #convert-note, #convert-note a { color: #6c6c75; font-family: var(--ui); font-size: 11px; }
   #convert-note a { text-decoration: underline; }
   :focus-visible { outline: 2px solid var(--hi); outline-offset: 2px; }
+  #id-links { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-top: 10px; font-size: 12px; }
+  #id-links span { color: var(--mute); letter-spacing: .12em; text-transform: uppercase; }
+  #id-links a { color: var(--txt); text-decoration: underline; text-underline-offset: 3px; }
+  #id-links a:hover { color: var(--hi); }
   #res-row { display: flex; gap: 8px; width: 500px; align-items: center; }
   .res-btn { flex: 1; background: var(--raise); border: 1px solid var(--line); border-radius: var(--r); color: var(--mute); font-family: var(--ui); font-weight: 500; font-size: 12px; letter-spacing: .14em; padding: 8px 10px; cursor: pointer; transition: all .15s; }
   .res-btn:hover { border-color: var(--line2); color: var(--txt); }
@@ -369,6 +373,11 @@
     <div class="section-label">Snippets</div>
     <div id="snippet-list"></div>
     <button id="add-snip-btn">+ snippet</button>
+    <div id="id-links">
+      <span>Track erkennen</span>
+      <a href="https://aha-music.com/upload" target="_blank" rel="noopener" title="Exportiertes Snippet hochladen. Kurzprüfung über 30 Sekunden, ohne Konto">AHA Music ↗</a>
+      <a href="https://www.shazam.com" target="_blank" rel="noopener" title="Hört über das Mikrofon mit. Snippet-Vorschau über die Lautsprecher abspielen">Shazam ↗</a>
+    </div>
     <button id="export-all-btn" disabled>⏺ export alle snippets</button>
     <div id="export-progress"></div>
     <div id="export-results"></div>
