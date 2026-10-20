@@ -199,7 +199,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   <div class="wrap">
     <div>
       <div class="namerow">
-        <h1 class="name"><span class="a">Varia</span><span class="b">Aves</span></h1>
+        <h1 class="name" style="-webkit-user-select:none;user-select:none"><span class="a">Varia</span><span class="b">Aves</span></h1>
         <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
       </div>
       <p class="tag">Raw, hypnotic techno played live on modular. Every set improvised, every night different.</p>
@@ -452,6 +452,24 @@ document.getElementById('copy').addEventListener('click', function(){
   function fallback(){ var r=document.createRange(); r.selectNodeContents(document.getElementById('mail')); var s=getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent='Selected, press copy'; }
   try{ navigator.clipboard.writeText(t).then(done, fallback); }catch(e){ fallback(); }
 });
+</script>
+
+<script>
+// 3x schnell auf den Namen klicken oeffnet das versteckte Clip-Tool
+(function(){
+  var el=document.querySelector('h1.name'); if(!el) return;
+  var n=0,t=0;
+  el.style.cursor='default';
+  el.addEventListener('click',function(){
+    var now=Date.now();
+    n=(now-t<700)?n+1:1; t=now;
+    if(n>=3){
+      n=0;
+      var url='clip-k7x2m9/';
+      if(!window.open(url,'_blank','noopener')) location.href=url;
+    }
+  });
+})();
 </script>
 
 </body>
