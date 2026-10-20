@@ -396,7 +396,7 @@
     <div class="section-label">Audio</div>
     <button class="upload-btn" id="audio-btn">+ Audio laden</button>
     <div id="audio-info" style="margin-top:0.5rem;font-size:10px;color:#666;letter-spacing:0.06em;"></div>
-    <button type="button" id="sc-toggle" hidden style="margin-top:0.6rem;background:none;border:none;padding:0;color:var(--mute,#888);font:inherit;font-size:11px;letter-spacing:.08em;text-decoration:underline;cursor:pointer;">oder SoundCloud-Link statt Datei</button>
+    <button type="button" id="sc-toggle" style="margin-top:0.6rem;background:none;border:none;padding:0;color:var(--mute,#888);font:inherit;font-size:11px;letter-spacing:.08em;text-decoration:underline;cursor:pointer;">oder SoundCloud-Link statt Datei</button>
     <div id="sc-panel" hidden style="margin-top:0.5rem;">
       <div class="field" style="display:flex;gap:6px;"><input type="text" id="sc-url" placeholder="https://soundcloud.com/…" style="flex:1;min-width:0;"><button class="upload-btn" id="sc-load" style="white-space:nowrap;">laden</button></div>
       <div id="sc-frame"></div>
@@ -1356,11 +1356,14 @@ function scNow(){return scPos+(scPlaying?(performance.now()-scPosAt)/1000:0);}
 
 (function loadScApi(){
   const s=document.createElement('script');s.src='https://w.soundcloud.com/player/api.js';
-  s.onload=()=>{if(window.SC&&SC.Widget)scEl.toggle.hidden=false;};
   s.onerror=()=>{};
   document.head.appendChild(s);
 })();
-scEl.toggle.addEventListener('click',()=>{scEl.panel.hidden=!scEl.panel.hidden;});
+const scAvail=()=>!!(window.SC&&SC.Widget);
+scEl.toggle.addEventListener('click',()=>{
+  scEl.panel.hidden=!scEl.panel.hidden;
+  if(!scEl.panel.hidden&&!scAvail()&&!scMode)scMsg('⚠ Der SoundCloud-Player konnte nicht geladen werden. Das geht nur auf der GitHub-Seite, nicht im Claude-Artifact. Werbe- oder Tracking-Blocker für diese Seite ausschalten und neu laden.',true);
+});
 
 function scLeave(){
   if(scWidget){try{scWidget.pause();}catch(e){}}
@@ -1370,6 +1373,7 @@ function scLeave(){
 
 function scLoadUrl(url){
   url=(url||'').trim();
+  if(!scAvail()){scMsg('⚠ Der SoundCloud-Player ist nicht geladen. Nur auf der GitHub-Seite verfügbar, Blocker prüfen.',true);return;}
   if(!/^https?:\/\/(www\.|m\.)?(soundcloud\.com|on\.soundcloud\.com)\//i.test(url)){scMsg('⚠ Bitte einen soundcloud.com-Link einfügen.',true);return;}
   stopFake();stopAllAudio(false);teardownMedia();lazy=null;lastWin=null;audioBuffer=null;scMode=false;scPlaying=false;
   scMsg('lädt...');
